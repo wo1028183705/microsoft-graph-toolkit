@@ -11,8 +11,8 @@ export class PersonaComponent {
 
     @Prop()imageSize : number = 24;
 
-    @Prop()id : string;
-    @Watch("id")
+    @Prop()email : string;
+    @Watch("email")
     function(newValue: string){
         this.loadImage();
     }
@@ -28,18 +28,18 @@ export class PersonaComponent {
 
     private async loadImage() {
         if (this.persona){
-
-        } else if (this.id) {
+            this.user = this.persona;
+            this.profileImage = this.persona.image;
+        } else if (this.email) {
             let provider = Providers.getAvailable();
             if (provider) {
-                
-                if (this.id == "me"){
-                    provider.graph.me().then(user => {
+                if (this.email == "me"){
+                    provider.graph.getMe().then(user => {
                         this.user = user;
                     });
                     this.profileImage = await provider.graph.myPhoto();
                 } else {
-                    provider.graph.findPerson(this.id).then(people => {
+                    provider.graph.findPerson(this.email).then(people => {
                         if (people && people.length > 0){
                             let person = people[0] as MicrosoftGraph.Person;
                             this.user = person;
@@ -48,9 +48,9 @@ export class PersonaComponent {
                                 provider.graph.getUserPhoto(userPrincipalName).then(photo => {
                                     this.profileImage = photo;
                                 });
-                                provider.graph.getUser(userPrincipalName).then(user => {
-                                    this.user = user;
-                                })
+                                // provider.graph.getUser(userPrincipalName).then(user => {
+                                //     this.user = user;
+                                // })
                             }
                         }
                     });

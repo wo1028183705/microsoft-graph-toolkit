@@ -11,6 +11,8 @@ import { toggleClass } from '../../global/helpers';
 })
 export class LoginComponent {
 
+  public static scopes = ['user.read'];
+
   @Element() $rootElement : HTMLElement;
   private $menuElement : HTMLElement;
 
@@ -34,6 +36,7 @@ export class LoginComponent {
   private async init() {
     const provider = Providers.getAvailable();
     if (provider) {
+      provider.addScope(...LoginComponent.scopes)
       provider.onLoginChanged(_ => this.loadState());
       await this.loadState();
     }
@@ -43,7 +46,7 @@ export class LoginComponent {
     const provider = Providers.getAvailable();
 
     if (provider && provider.isLoggedIn) {
-      this.user = await provider.graph.me();
+      this.user = await provider.graph.getMe();
       this.profileImage = await provider.graph.myPhoto();
     }
   }
@@ -106,7 +109,7 @@ export class LoginComponent {
     return <div>
         <div class="login-signed-in-root">
           <div class="login-signed-in-image">
-            <graph-persona id="me" image-size="24" />
+            <graph-persona email="me" image-size="24" />
           </div>
           <div class="login-signed-in-content">
             {this.user.displayName}
@@ -126,7 +129,7 @@ export class LoginComponent {
       <div class="login-menu-content">
         <div class="login-menu-user-profile">
           <div class="login-menu-user-image">
-            <graph-persona id="me" image-size="65" />
+            <graph-persona email="me" image-size="65" />
           </div>
           <div class="login-menu-user-details">
             <div class="login-menu-user-display-name">{this.user.displayName}</div>

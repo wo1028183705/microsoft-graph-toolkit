@@ -9,6 +9,8 @@ import { Providers, IAuthProvider } from '@m365toolkit/providers';
 })
 export class AgendaComponent {
 
+    public static scopes = ['user.read', 'user.readbasic.all'];
+
     @State() _things : Array<MicrosoftGraph.Event> 
 
     @Prop() eventTemplateFunction : (event: any) => string;
@@ -26,6 +28,7 @@ export class AgendaComponent {
     private async init() {
         this._provider = Providers.getAvailable();
         if (this._provider) {
+            this._provider.addScope(...AgendaComponent.scopes);
             this._provider.onLoginChanged(_ => this.loadData());
             await this.loadData();
         }
@@ -36,7 +39,7 @@ export class AgendaComponent {
             let today = new Date();
             let tomorrow = new Date();
             tomorrow.setDate(today.getDate() + 2);
-            this._things = await this._provider.graph.calendar(today, tomorrow);
+            this._things = await this._provider.graph.getMyCalendarEvents(today, tomorrow);
         }
     }
 
@@ -73,7 +76,7 @@ export class AgendaComponent {
                     <ul class='event-attendie-list'>
                         {event.attendees.slice(0, 5).map(at =>
                             <li class="event-attendie">
-                                <graph-persona id={at.emailAddress.address} image-size="30"></graph-persona>
+                                <graph-persona email={at.emailAddress.address} image-size="30"></graph-persona>
                             </li>
                         )}
                     </ul>

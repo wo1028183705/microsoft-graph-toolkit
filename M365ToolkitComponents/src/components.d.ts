@@ -29,12 +29,12 @@ export namespace Components {
   interface GraphLoginAttributes extends StencilHTMLAttributes {}
 
   interface GraphPersona {
-    'id': string;
+    'email': string;
     'imageSize': number;
     'persona': GraphPersonaUser;
   }
   interface GraphPersonaAttributes extends StencilHTMLAttributes {
-    'id'?: string;
+    'email'?: string;
     'imageSize'?: number;
     'persona'?: GraphPersonaUser;
   }

@@ -10,6 +10,11 @@ declare var window: Window;
 
 export class WamProvider implements IAuthProvider {
 
+    addScope(...scope: string[]) {
+        // TODO
+        throw new Error("Method not implemented.");
+    }
+
     private graphResource = 'https://graph.microsoft.com';
     private clientId : string;
     private authority : string;
@@ -85,7 +90,7 @@ export class WamProvider implements IAuthProvider {
         throw new Error("Method not implemented.");
     }
 
-    getAccessToken(scopes?: string[]): Promise<string> {
+    getAccessToken(): Promise<string> {
         if (this.isLoggedIn) {
             return Promise.resolve(this.accessToken);
         }

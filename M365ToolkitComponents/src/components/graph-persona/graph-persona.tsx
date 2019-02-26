@@ -23,6 +23,7 @@ export class PersonaComponent {
     @State() profileImage: string;
 
     async componentWillLoad() {
+        Providers.onProvidersChanged(_ => this.loadImage());
         this.loadImage();
     }
 
@@ -78,9 +79,14 @@ export class PersonaComponent {
             if (this.profileImage) {
                 return <img class="persona-user-image" src={this.profileImage as string}></img>
             } else {
-                
+                const initialsStyle = {
+                    "font-size" : (this.imageSize * 0.45) + "px"
+                }
                 return <div class="persona-initials-container">
-                        <span class="persona-initials">{this.getInitials(this.user)}</span>
+                        <span class="persona-initials"
+                            style={initialsStyle}>
+                            {this.getInitials(this.user)}
+                        </span>
                         </div>
             }
         }

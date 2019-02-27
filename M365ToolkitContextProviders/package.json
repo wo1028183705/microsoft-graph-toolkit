@@ -13,7 +13,7 @@
     "build": "npm run clean && npm run build:modules && webpack"
   },
   "dependencies": {
-    "@microsoft/microsoft-graph-client": "^1.4.0",
+    "@microsoft/microsoft-graph-client": "file:../../msgraph-sdk-javascript/microsoft-microsoft-graph-client-1.4.0.tgz",
     "@microsoft/microsoft-graph-types": "^1.5.0",
     "msal": "^0.2.4"
   },

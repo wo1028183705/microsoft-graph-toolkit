@@ -1,5 +1,5 @@
 import * as MicrosoftGraph from "@microsoft/microsoft-graph-types"
-import { Client, ResponseType } from "@microsoft/microsoft-graph-client"
+import { Client, ResponseType } from "@microsoft/microsoft-graph-client/lib/es6/src"
 import { IAuthProvider } from "./IAuthProvider";
 
 export interface IGraph {
@@ -18,8 +18,8 @@ export class Graph implements IGraph {
 
     constructor(provider: IAuthProvider) {
         this.client = Client.init({
-            authProvider: (done) => {
-                provider.getAccessToken();
+            authProvider: async (done) => {
+                done(null, await provider.getAccessToken());
             }
         })
     }
@@ -80,26 +80,27 @@ export class Graph implements IGraph {
     //     return response;
     // }
 
-    async getMe() : Promise<MicrosoftGraph.User> {
+    getMe() : Promise<MicrosoftGraph.User> {
         return this.client.api('me').get();
     }
 
-    async getUser(userPrincipleName: string) : Promise<MicrosoftGraph.User> {
+    getUser(userPrincipleName: string) : Promise<MicrosoftGraph.User> {
         return this.client.api(`/users/${userPrincipleName}`).get();
     }
 
     async findPerson(query: string) : Promise<MicrosoftGraph.Person[]>{
-        return this.client.api(`/me/people`).search(query).get();
+        let result = await this.client.api(`/me/people`).search('"' + query + '"').get();
+        return result ? result.value : null;
     }
 
     async myPhoto() : Promise<string> {
         let blob = await this.client.api('/me/photo/$value').responseType(ResponseType.BLOB).get();
-        return this.blobToBase64(blob);
+        return await this.blobToBase64(blob);
     }
 
     async getUserPhoto(id: string) : Promise<string> {
         let blob = await this.client.api(`users/${id}/photo/$value`).responseType(ResponseType.BLOB).get();
-        return this.blobToBase64(blob);
+        return await this.blobToBase64(blob);
     }
 
     private blobToBase64(blob: Blob) : Promise<string> {
@@ -135,11 +136,12 @@ export class Graph implements IGraph {
     //     }
     // }
 
-    async getMyCalendarEvents(startDateTime : Date, endDateTime : Date) : Promise<Array<MicrosoftGraph.Event>> {
+    async getMyCalendarEvents(startDateTime : Date, endDateTime : Date) : Promise<MicrosoftGraph.Event[]> {
         let sdt = `startdatetime=${startDateTime.toISOString()}`;
         let edt = `enddatetime=${endDateTime.toISOString()}`
         let uri = `/me/calendarview?${sdt}&${edt}`;
 
-        return this.client.api(uri).get();
+        let calendarView = await this.client.api(uri).get();
+        return calendarView ? calendarView.value : null;
     }
 }

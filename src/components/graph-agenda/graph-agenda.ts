@@ -6,9 +6,12 @@ import { style } from './graph-agenda.style';
 
 import '../graph-persona/graph-persona.js'
 
+
 @customElement('graph-agenda')
 export class AgendaComponent extends LitElement{
-
+    
+    public static scopes = ['user.read', 'user.readbasic.all'];
+    
     @property({attribute: false}) _events : Array<MicrosoftGraph.Event> 
     @property() eventTemplateFunction : (event: any) => string;
     
@@ -29,6 +32,7 @@ export class AgendaComponent extends LitElement{
     private async init() {
         this._provider = Providers.getAvailable();
         if (this._provider) {
+            this._provider.addScope(...AgendaComponent.scopes);
             this._provider.onLoginChanged(_ => this.loadData());
             await this.loadData();
         }
@@ -39,7 +43,7 @@ export class AgendaComponent extends LitElement{
             let today = new Date();
             let tomorrow = new Date();
             tomorrow.setDate(today.getDate() + 2);
-            this._events = await this._provider.graph.calendar(today, tomorrow);
+            this._events = await this._provider.graph.getMyCalendarEvents(today, tomorrow);
         }
     }
 

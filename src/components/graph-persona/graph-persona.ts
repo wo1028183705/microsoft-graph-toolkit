@@ -50,7 +50,7 @@ export class PersonaComponent extends LitElement {
             let provider = Providers.getAvailable();
             if (provider) {
                 if (this.personaId == "me"){
-                    provider.graph.me().then(user => {
+                    provider.graph.getMe().then(user => {
                         this.user = user;
                     });
                     this.profileImage = await provider.graph.myPhoto();

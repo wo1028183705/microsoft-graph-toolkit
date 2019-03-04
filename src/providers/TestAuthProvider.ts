@@ -4,7 +4,6 @@ import { IGraph } from "./GraphSDK";
 import { EventDispatcher } from "./EventHandler";
 
 export class TestAuthProvider implements IAuthProvider {
-    
     isAvailable: boolean = true;
 
     isLoggedIn: boolean = false;
@@ -15,14 +14,20 @@ export class TestAuthProvider implements IAuthProvider {
         this._loginChangedDispatcher.fire({});
         return Promise.resolve();
     }
+
     logout(): Promise<void> {
         this.isLoggedIn = false;
         this._loginChangedDispatcher.fire({});
         return Promise.resolve();
     }
-    getAccessToken(scopes?: string[]): Promise<string> {
+
+    getAccessToken(): Promise<string> {
         return Promise.resolve("");
     }
+
+    addScope(...scope: string[]) {
+    }
+
     provider: any;
 
     graph: IGraph = new TestGraph();
@@ -36,7 +41,7 @@ export class TestGraph implements IGraph {
     async findPerson(query: string): Promise<MicrosoftGraph.Person[]> {
         return Promise.resolve([await this.getUser('me')]);
     }
-    calendar(startDateTime: Date, endDateTime: Date): Promise<MicrosoftGraph.Event[]> {
+    getMyCalendarEvents(startDateTime: Date, endDateTime: Date): Promise<MicrosoftGraph.Event[]> {
         let calendarData : MicrosoftGraph.Event[] = [
             {
                 subject : 'event 1',
@@ -109,7 +114,7 @@ export class TestGraph implements IGraph {
         return Promise.resolve(calendarData);
     }
 
-    me() : Promise<MicrosoftGraph.User> {
+    getMe() : Promise<MicrosoftGraph.User> {
         let testUser : MicrosoftGraph.User =  {
             displayName: 'Test User',
             mail: 'email@contoso.com'

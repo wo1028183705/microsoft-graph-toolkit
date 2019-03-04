@@ -5,7 +5,7 @@ import { MsalConfig } from './MsalConfig';
 import {UserAgentApplication} from "msal/lib-es6";
 
 export class MsalProvider implements IAuthProvider {
-    
+        
     private _loginChangedDispatcher = new EventDispatcher<LoginChangedEvent>();
     private _loginType : LoginType;
     private _clientId : string;
@@ -81,19 +81,18 @@ export class MsalProvider implements IAuthProvider {
         }
     }
 
-    async getAccessToken(scopes?: string[]): Promise<string> {
+    async getAccessToken(): Promise<string> {
         let accessToken : string;
-        scopes = scopes || this.scopes;
         try {
-            accessToken = await this.provider.acquireTokenSilent(scopes);
+            accessToken = await this.provider.acquireTokenSilent(this.scopes);
         } catch (e) {
             try {
                 // TODO - figure out for what error this logic is needed so we
                 // don't prompt the user to login unnecessarily
                 if (this._loginType == LoginType.Redirect) {
-                    await this.provider.acquireTokenRedirect(scopes);
+                    await this.provider.acquireTokenRedirect(this.scopes);
                 } else {
-                    accessToken = await this.provider.acquireTokenPopup(scopes);
+                    accessToken = await this.provider.acquireTokenPopup(this.scopes);
                 }
             } catch (e) {
                 // TODO - figure out how to expose this during dev to make it easy for the dev to figure out
@@ -103,6 +102,12 @@ export class MsalProvider implements IAuthProvider {
             }
         }
         return accessToken;
+    }
+
+    addScope(...scopes : string[]) {
+        let combinedScopes = [...scopes, ...this.scopes];
+        let set = new Set(combinedScopes);
+        this.scopes = [...set];
     }
     
     async logout(): Promise<void> {

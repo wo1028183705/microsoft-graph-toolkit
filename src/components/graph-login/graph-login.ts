@@ -34,7 +34,12 @@ export class LoginComponent extends LitElement {
     const provider = Providers.getAvailable();
 
     if (provider && provider.isLoggedIn) {
-      this._user = await provider.graph.getMe();
+      try{
+        this._user = await provider.graph.getMe();
+      }
+      catch (e) {
+        debugger;
+      }
     }
   }
 

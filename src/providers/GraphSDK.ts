@@ -17,10 +17,14 @@ export class Graph implements IGraph {
     // private token: string;
     private client : Client;
 
+    private _provider : IAuthProvider;
+
     constructor(provider: IAuthProvider) {
+        this._provider = provider;
         this.client = Client.init({
             authProvider: async (done) => {
-                done(null, await provider.getAccessToken());
+                let token = await this._provider.getAccessToken();
+                done(null, token);
             }
         })
     }
@@ -82,24 +86,29 @@ export class Graph implements IGraph {
     // }
 
     async getMe() : Promise<MicrosoftGraph.User> {
+        this._provider.addScope('user.read')
         return await this.client.api('me').get();
     }
 
     async getUser(userPrincipleName: string) : Promise<MicrosoftGraph.User> {
+        this._provider.addScope('user.read.all')
         return await this.client.api(`/users/${userPrincipleName}`).get();
     }
 
     async findPerson(query: string) : Promise<MicrosoftGraph.Person[]>{
+        this._provider.addScope('people.read')
         let result = await this.client.api(`/me/people`).search('"' + query + '"').get();
         return result ? result.value : null;
     }
 
     async myPhoto() : Promise<string> {
+        this._provider.addScope('user.read')
         let blob = await this.client.api('/me/photo/$value').responseType(ResponseType.BLOB).get();
         return await this.blobToBase64(blob);
     }
 
     async getUserPhoto(id: string) : Promise<string> {
+        this._provider.addScope('user.readbasic.all')
         let blob = await this.client.api(`users/${id}/photo/$value`).responseType(ResponseType.BLOB).get();
         return await this.blobToBase64(blob);
     }

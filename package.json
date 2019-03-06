@@ -18,15 +18,13 @@
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^1.6.0",
-<<<<<<< HEAD
     "@types/node": "^11.10.4",
-=======
     "@webcomponents/webcomponentsjs": "^2.2.7",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
->>>>>>> lit-element
     "owc-dev-server": "^0.2.0",
     "shx": "^0.3.2",
     "ts-loader": "^5.3.3",
+    "tslint": "^5.13.1",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"

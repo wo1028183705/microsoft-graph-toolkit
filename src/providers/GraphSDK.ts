@@ -91,7 +91,7 @@ export class Graph implements IGraph {
     }
 
     async getUser(userPrincipleName: string) : Promise<MicrosoftGraph.User> {
-        this._provider.addScope('user.read.all')
+        this._provider.addScope('user.readbasic.all')
         return await this.client.api(`/users/${userPrincipleName}`).get();
     }
 

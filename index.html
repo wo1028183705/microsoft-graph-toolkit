@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Microsoft Graph Toolkit Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
-    
+
     <!-- <script type="module" src="./dist/es6/components/graph-login/graph-login.js"></script>
     <script type="module" src="./dist/es6/components/graph-persona/graph-persona.js"></script>
     <script type="module" src="./dist/es6/components/graph-agenda/graph-agenda.js"></script>
@@ -16,6 +16,7 @@
 
     <!-- <script src="./dist/es5/ms-graph-toolkit.js"></script> -->
 
+<<<<<<< HEAD
 </head>
 <body>
     <graph-msal-provider test="test" client-id="a974dfa0-9f57-49b9-95db-90f04ce2111a"></graph-msal-provider>
@@ -24,6 +25,25 @@
     <!-- <graph-persona persona-id="nikola metulev" image-size="100"></graph-persona> -->
 
     <graph-agenda id='myDay'></graph-agenda>
+=======
+    <style>
+      /* todo: @font-face doesn't work inside ShadowDom...
+         https://bugs.chromium.org/p/chromium/issues/detail?id=336876
+         Might just use svg directly. */
+      @font-face {
+        font-family: 'FabricMDL2Icons';
+        src: url('/src/fonts/fabric-icons.woff') format('woff');
+      }
+    </style>
+  </head>
+  <body>
+    <graph-msal-provider
+      test="test"
+      client-id="a974dfa0-9f57-49b9-95db-90f04ce2111a"
+    ></graph-msal-provider>
+    <graph-login style="float: right;"></graph-login>
+    <graph-agenda id="myDay"></graph-agenda>
+>>>>>>> master
 
     <!-- <script type="module">
         import {Providers} from './dist/es6/index.js'
@@ -31,7 +51,7 @@
         Providers.addMsalProvider({
             clientId: 'a974dfa0-9f57-49b9-95db-90f04ce2111a'
         });
-    
+
     </script> -->
 
     <!-- <script>
@@ -64,7 +84,7 @@
         // myDay.eventTemplateFunction = (event) => {
         //     let template = document.getElementById("my-template");
         //     let templateContent = template.content.cloneNode(true);
-            
+
         //     let btn = templateContent.querySelector('.eventBtn');
         //     btn.innerHTML = event.subject;
         //     btn.onclick = function () {
@@ -73,5 +93,5 @@
         //     return templateContent;
         // };
     </script> -->
-</body>
+  </body>
 </html>

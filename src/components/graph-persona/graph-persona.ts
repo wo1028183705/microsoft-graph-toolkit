@@ -27,44 +27,6 @@ export class PersonaComponent extends LitElement {
     if (name == 'persona-id' && oldval !== newval) {
       this.loadImage();
     }
-<<<<<<< HEAD
-
-    async componentWillLoad() {
-        Providers.onProvidersChanged(_ => this.loadImage());
-        this.loadImage();
-    }
-
-    private async loadImage() {
-        if (this.persona){
-
-        } else if (this.personaId) {
-            let provider = Providers.getAvailable();
-            if (provider) {
-                if (this.personaId == "me"){
-                    provider.graph.getMe().then(user => {
-                        this.user = user;
-                    });
-                    this.profileImage = await provider.graph.myPhoto();
-                } else {
-                    provider.graph.findPerson(this.personaId).then(people => {
-                        if (people && people.length > 0){
-                            let person = people[0] as MicrosoftGraph.Person;
-                            this.user = person;
-                            if (person.userPrincipalName) {
-                                let userPrincipalName = person.userPrincipalName;
-                                provider.graph.getUserPhoto(userPrincipalName).then(photo => {
-                                    this.profileImage = photo;
-                                });
-                                provider.graph.getUser(userPrincipalName).then(user => {
-                                    this.user = user;
-                                })
-                            }
-                        }
-                    });
-                }
-            } else {
-                this.user = null;
-=======
   }
 
   static get styles() {
@@ -88,7 +50,7 @@ export class PersonaComponent extends LitElement {
       let provider = Providers.getAvailable();
       if (provider) {
         if (this.personaId == 'me') {
-          provider.graph.me().then(user => {
+          provider.graph.getMe().then(user => {
             this.user = user;
           });
           this.profileImage = await provider.graph.myPhoto();
@@ -101,12 +63,10 @@ export class PersonaComponent extends LitElement {
                 let userPrincipalName = person.userPrincipalName;
                 provider.graph.getUserPhoto(userPrincipalName).then(photo => {
                   this.profileImage = photo;
-                });
-                provider.graph.getUser(userPrincipalName).then(user => {
-                  this.user = user;
+                }).catch(error => {
+                  //no op
                 });
               }
->>>>>>> master
             }
           });
         }

@@ -74,13 +74,11 @@ export class MsalProvider implements IAuthProvider {
     async tryGetIdTokenSilent() : Promise<boolean> {
         try {
             this._idToken = await this.provider.acquireTokenSilent([this._clientId]);
-            console.log("tryGetIdTokenSilent: idToken " + this._idToken)
             if (this._idToken) {
                 this.fireLoginChangedEvent({});
             }
             return this.isLoggedIn;
         } catch (e) {
-            console.log(e);
             return false;
         }
     }
@@ -112,9 +110,11 @@ export class MsalProvider implements IAuthProvider {
     }
 
     addScope(...scopes : string[]) {
-        let combinedScopes = [...scopes, ...this.scopes];
-        let set = new Set(combinedScopes);
-        this.scopes = [...set];
+        scopes.forEach((scope) => {
+            if (this.scopes.indexOf(scope) < 0) {
+                this.scopes.push(scope);
+            }
+        });
     }
     
     async logout(): Promise<void> {
@@ -128,14 +128,11 @@ export class MsalProvider implements IAuthProvider {
 
     tokenReceivedCallback(errorDesc : string, token: string, error: any, tokenType, state: any)
     {
-        console.log("tokenReceivedCallback");
         if (error) {
-            console.log("tokenReceivedCallback: errorDesc = " + errorDesc)
             if (this._rejectToken) {
                 this._rejectToken(errorDesc);
             }
         } else {
-            console.log("tokenReceivedCallback: tokenType = " + tokenType)
             if (tokenType === 'id_token') {
                 this._idToken = token;
                 this.fireLoginChangedEvent({});

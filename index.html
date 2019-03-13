@@ -27,21 +27,37 @@
     </style>
   </head>
   <body>
-    <graph-msal-provider
+    <!-- <graph-msal-provider
       test="test"
       client-id="a974dfa0-9f57-49b9-95db-90f04ce2111a"
-    ></graph-msal-provider>
+    ></graph-msal-provider> -->
     <graph-login style="float: right;"></graph-login>
     <graph-agenda id="myDay"></graph-agenda>
 
-    <!-- <script type="module">
-        import {Providers} from './dist/es6/index.js'
+    <script type="module">
+        import {Providers, MsalProvider} from './dist/es6/index.js'
+        import {UserAgentApplication} from "./node_modules/msal/lib-es6/index.js";
 
-        Providers.addMsalProvider({
-            clientId: 'a974dfa0-9f57-49b9-95db-90f04ce2111a'
-        });
+        
 
-    </script> -->
+        let userAgentApplication = new UserAgentApplication(
+          "a974dfa0-9f57-49b9-95db-90f04ce2111a",
+          null,
+          callbackFunction);
+
+        let provider = MsalProvider.createFromUserAgentApplication(userAgentApplication);
+        
+        Providers.add(provider);
+
+        // Providers.addMsalProvider({
+        //     clientId: 'a974dfa0-9f57-49b9-95db-90f04ce2111a'
+        // });
+
+        function callbackFunction(errorDesc, token, error, tokenType, state){
+          provider.tokenReceivedCallback(errorDesc, token, error, tokenType, state);
+        }
+
+    </script>
 
     <!-- <script>
         msGraphToolkit.Providers.addMsalProvider({

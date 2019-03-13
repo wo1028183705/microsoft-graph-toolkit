@@ -36,7 +36,7 @@ export module Providers {
     }
 
     export function addMsalProvider(config : MsalConfig) {
-        add(new MsalProvider(config));
+        add(MsalProvider.create(config));
     }
 
     export function onProvidersChanged(event : EventHandler<any>) {

@@ -1,48 +1,64 @@
 import { IAuthProvider, LoginChangedEvent, LoginType } from "./IAuthProvider";
-import { Graph } from './GraphSDK';
-import { EventHandler, EventDispatcher } from './EventHandler';
-import { MsalConfig } from './MsalConfig';
+import { Graph } from "./GraphSDK";
+import { EventHandler, EventDispatcher } from "./EventHandler";
+import { MsalConfig } from "./MsalConfig";
 import {UserAgentApplication} from "msal/lib-es6";
 
 export class MsalProvider implements IAuthProvider {
-    
+
     private _loginChangedDispatcher = new EventDispatcher<LoginChangedEvent>();
     private _loginType : LoginType;
-    private _clientId : string;
-    
+
     private _idToken : string;
 
-    private _provider : UserAgentApplication;
-    
-    get provider() {
-        return this._provider;
-    };
+    private _userAgentApplication : UserAgentApplication;
 
-    get isLoggedIn() : boolean {
+    get provider(): UserAgentApplication {
+        return this._userAgentApplication;
+    }
+
+    get isLoggedIn(): boolean {
         return !!this._idToken;
-    };
+    }
 
     get isAvailable(): boolean{
         return true;
-    };
+    }
 
     scopes: string[];
-    authority: string;
-    
+
     graph: Graph;
 
-    constructor(config: MsalConfig) {
+    private constructor() { }
+
+    public static create(config: MsalConfig) {
         if (!config.clientId) {
             throw "ClientID must be a valid string";
         }
 
-        this.initProvider(config);
+        let provider = new MsalProvider();
+        provider.initProvider(config);
+
+        return provider;
+    }
+
+    public static createFromUserAgentApplication(userAgentApplication: UserAgentApplication, loginType = LoginType.Redirect){
+        let provider = new MsalProvider();
+        provider.scopes = ["user.read"];
+        provider._loginType = loginType;
+
+        provider._userAgentApplication = userAgentApplication;
+        provider.graph = new Graph(provider);
+
+        provider.tryGetIdTokenSilent();
+
+        return provider;
     }
 
     private initProvider(config: MsalConfig) {
-        this._clientId = config.clientId;
+        let clientId = config.clientId;
         this.scopes = (typeof config.scopes !== 'undefined') ? config.scopes : ["user.read"];
-        this.authority = (typeof config.authority !== 'undefined') ? config.authority : null;
+        let authority = (typeof config.authority !== 'undefined') ? config.authority : null;
         let options = (typeof config.options != 'undefined') ? config.options : {};
         this._loginType = (typeof config.loginType !== 'undefined') ? config.loginType : LoginType.Redirect;
 
@@ -53,14 +69,14 @@ export class MsalProvider implements IAuthProvider {
         // import msal
         // let msal = await import(/* webpackChunkName: "msal" */ "msal/lib-es6");
 
-        this._provider = new UserAgentApplication(this._clientId, this.authority, callbackFunction, options);
+        this._userAgentApplication = new UserAgentApplication(clientId, authority, callbackFunction, options);
         this.graph = new Graph(this);
 
         this.tryGetIdTokenSilent();
     }
-    
+
     async login(): Promise<void> {
-        if (this._loginType == LoginType.Popup) {
+        if (this._loginType === LoginType.Popup) {
             this._idToken = await this.provider.loginPopup(this.scopes);
             this.fireLoginChangedEvent({});
         } else {
@@ -68,9 +84,9 @@ export class MsalProvider implements IAuthProvider {
         }
     }
 
-    async tryGetIdTokenSilent() : Promise<boolean> {
+    async tryGetIdTokenSilent(): Promise<boolean> {
         try {
-            this._idToken = await this.provider.acquireTokenSilent([this._clientId]);
+            this._idToken = await this.provider.acquireTokenSilent([this._userAgentApplication.clientId]);
             if (this._idToken) {
                 this.fireLoginChangedEvent({});
             }
@@ -122,6 +138,8 @@ export class MsalProvider implements IAuthProvider {
             this._idToken = token;
             this.fireLoginChangedEvent({});
         }
+
+        console.log('here');
     }
 
     onLoginChanged(eventHandler : EventHandler<LoginChangedEvent>) {

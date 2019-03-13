@@ -42,7 +42,7 @@ export class MsalProviderComponent extends LitElement{
                 config.loginType = loginTypeEnum;
             }
 
-            this._provider = new MsalProvider(config);
+            this._provider = MsalProvider.create(config);
 
             Providers.add(this._provider);
         }

@@ -8,9 +8,10 @@ import { styles } from './mgt-login-css';
 import { MgtPersonDetails } from '../mgt-person/mgt-person';
 import '../mgt-person/mgt-person';
 import '../../styles/fabric-icon-font';
+import { MgtTemplatedComponent } from '../templatedComponent';
 
 @customElement('mgt-login')
-export class MgtLogin extends LitElement {
+export class MgtLogin extends MgtTemplatedComponent {
   private _loginButtonRect: ClientRect;
   private _popupRect: ClientRect;
   private _openLeft: boolean = false;
@@ -25,6 +26,18 @@ export class MgtLogin extends LitElement {
   })
   userDetails: MgtPersonDetails;
 
+  @property({
+    attribute: 'sign-in-text',
+    type: String
+  })
+  signInText = 'Sign In';
+
+  @property({
+    attribute: 'sign-out-text',
+    type: String
+  })
+  signOutText = 'Sign Out';
+
   static get styles() {
     return styles;
   }
@@ -33,14 +46,6 @@ export class MgtLogin extends LitElement {
     super();
     Providers.onProviderUpdated(() => this.loadState());
     this.loadState();
-  }
-
-  private fireCustomEvent(eventName: string): boolean {
-    let event = new CustomEvent(eventName, {
-      cancelable: true,
-      bubbles: false
-    });
-    return this.dispatchEvent(event);
   }
 
   updated(changedProps) {
@@ -215,34 +220,47 @@ export class MgtLogin extends LitElement {
   render() {
     const content = this._user || this.userDetails ? this.renderLoggedIn() : this.renderLogIn();
 
-    return html`
-      <div class="root">
-        <button ?disabled="${this._loading}" class="login-button" @click=${this.onClick}>
-          ${content}
-        </button>
-        ${this.renderMenu()}
-      </div>
-    `;
+    return (
+      this.renderTemplate('default', { content: content, isLoading: this._loading }) ||
+      html`
+        <div class="root">
+          <button ?disabled="${this._loading}" class="login-button" @click=${this.onClick}>
+            ${content}
+          </button>
+          ${this.renderMenu()}
+        </div>
+      `
+    );
   }
 
   renderLogIn() {
-    return html`
-      <i class="login-icon ms-Icon ms-Icon--Contact"></i>
-      <span>
-        Sign In
-      </span>
-    `;
+    return (
+      this.renderTemplate('signed-out', { signInText: this.signInText }) ||
+      html`
+        <i class="login-icon ms-Icon ms-Icon--Contact"></i>
+        <span>
+          ${this.signInText}
+        </span>
+      `
+    );
   }
 
   renderLoggedIn() {
+    /* TODO: Can we load all _user details into MgtPersonObject to simplify this? */
     if (this._user) {
-      return html`
-        <mgt-person person-query="me" show-name />
-      `;
+      return (
+        this.renderTemplate('signed-in', { details: this._user }) ||
+        html`
+          <mgt-person person-query="me" show-name />
+        `
+      );
     } else if (this.userDetails) {
-      return html`
-        <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name />
-      `;
+      return (
+        this.renderTemplate('signed-in', { details: this.userDetails }) ||
+        html`
+          <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name />
+        `
+      );
     } else {
       return this.renderLogIn();
     }
@@ -253,31 +271,36 @@ export class MgtLogin extends LitElement {
       return;
     }
 
-    let personComponent = this._user
-      ? html`
-          <mgt-person person-query="me" show-name show-email />
-        `
-      : html`
-          <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name show-email />
-        `;
+    let personComponent =
+      this.renderTemplate('menu-content', { details: this._user || this.userDetails }) ||
+      (this._user
+        ? html`
+            <mgt-person person-query="me" show-name show-email />
+          `
+        : html`
+            <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name show-email />
+          `);
 
-    return html`
-      <div class="popup ${this._openLeft ? 'open-left' : ''} ${this._showMenu ? 'show-menu' : ''}">
-        <div class="popup-content">
-          <div>
-            ${personComponent}
-          </div>
-          <div class="popup-commands">
-            <ul>
-              <li>
-                <button class="popup-command" @click=${this.logout}>
-                  Sign Out
-                </button>
-              </li>
-            </ul>
+    return (
+      this.renderTemplate('menu-container', { content: personComponent }) ||
+      html`
+        <div class="popup ${this._openLeft ? 'open-left' : ''} ${this._showMenu ? 'show-menu' : ''}">
+          <div class="popup-content">
+            <div>
+              ${personComponent}
+            </div>
+            <div class="popup-commands">
+              <ul>
+                <li>
+                  <button class="popup-command" @click=${this.logout}>
+                    ${this.signOutText}
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      `
+    );
   }
 }

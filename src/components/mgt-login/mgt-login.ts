@@ -125,7 +125,7 @@ export class MgtLogin extends MgtTemplatedComponent {
 
   firstUpdated() {
     window.onclick = (event: any) => {
-      if (event.target !== this) {
+      if (event.target !== this && event.target.slot !== 'signed-in') {
         // get popup bounds
         const popup = this.shadowRoot.querySelector('.popup');
         if (popup) {

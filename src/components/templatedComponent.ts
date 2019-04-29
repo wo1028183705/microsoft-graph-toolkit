@@ -13,7 +13,7 @@ export abstract class MgtTemplatedComponent extends MgtBaseComponent {
 
   protected update(changedProperties) {
     // remove slots we added so they are not duplicated
-    this.removeSlottedElements();
+    //this.removeSlottedElements();
     super.update(changedProperties);
   }
 
@@ -60,8 +60,17 @@ export abstract class MgtTemplatedComponent extends MgtBaseComponent {
       return null;
     }
 
-    let templateContent = TemplateHelper.renderTemplate(this.templates[templateType], context);
     slotName = slotName || templateType;
+
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].slot == slotName) {
+        return html`
+          <slot name=${slotName}></slot>
+        `;
+      }
+    }
+
+    let templateContent = TemplateHelper.renderTemplate(this.templates[templateType], context);
 
     let div = document.createElement('div');
     div.slot = slotName;

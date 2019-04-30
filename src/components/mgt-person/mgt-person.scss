@@ -11,6 +11,7 @@
   --avatar-size: 48px;
   --avatar-font-size--s: 16px;
   --avatar-font-size: 32px;
+  --avatar-border: 0;
   --initials-color: white;
   --initials-background-color: #{$ms-color-magenta};
 }
@@ -21,7 +22,7 @@ svg {
 }
 
 img {
-  border: 0;
+  border: var(--avatar-border);
   border-radius: 50%;
 }
 
@@ -51,6 +52,10 @@ img {
     background-color: var(--initials-background-color);
     border-radius: 50%;
     font-weight: var(--font-weight);
+  }
+
+  .initials-text {
+    font-size: calc(var(--avatar-size--s) * 0.45);
   }
 
   &.small {
@@ -108,6 +113,7 @@ img {
   font-size: var(--email-font-size);
   white-space: nowrap;
   grid-column: 2;
+  grid-row: 2;
   -ms-grid-column: 2;
   -ms-grid-row: 2
 }

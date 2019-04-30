@@ -70,7 +70,7 @@ export class MgtAgenda extends MgtTemplatedComponent {
                 at =>
                   html`
                     <li class="event-attendee">
-                      <mgt-person person-query=${at.emailAddress.address} image-size="30"></mgt-person>
+                      <mgt-person person-query=${at.emailAddress.address}></mgt-person>
                     </li>
                   `
               )}

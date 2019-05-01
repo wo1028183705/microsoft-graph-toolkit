@@ -125,13 +125,11 @@ export class MgtLogin extends MgtTemplatedComponent {
 
   firstUpdated() {
     window.onclick = (event: any) => {
-      if (event.target !== this && event.target.slot !== 'signed-in') {
-        // get popup bounds
-        const popup = this.shadowRoot.querySelector('.popup');
-        if (popup) {
-          this._popupRect = popup.getBoundingClientRect();
-          this._showMenu = false;
-        }
+      // get popup bounds
+      const popup = this.shadowRoot.querySelector('.popup');
+      if (popup) {
+        this._popupRect = popup.getBoundingClientRect();
+        this._showMenu = false;
       }
     };
   }
@@ -158,7 +156,7 @@ export class MgtLogin extends MgtTemplatedComponent {
     this._loading = false;
   }
 
-  private onClick() {
+  private onClick(event: Event) {
     if (this._user || this.userDetails) {
       // get login button bounds
       const loginButton = this.shadowRoot.querySelector('.login-button');
@@ -170,6 +168,8 @@ export class MgtLogin extends MgtTemplatedComponent {
         this._openLeft = rightEdge < leftEdge;
 
         this._showMenu = !this._showMenu;
+
+        event.stopPropagation();
       }
     } else {
       if (this.fireCustomEvent('loginInitiated')) {
@@ -281,7 +281,7 @@ export class MgtLogin extends MgtTemplatedComponent {
             <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name show-email />
           `);
 
-    let popupCommands = 
+    let popupCommands =
       this.renderTemplate('menu-commands', { logout: this.logout, signOutText: this.signOutText }) ||
       html`
         <div class="popup-commands">

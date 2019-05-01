@@ -281,6 +281,20 @@ export class MgtLogin extends MgtTemplatedComponent {
             <mgt-person person-details=${JSON.stringify(this.userDetails)} show-name show-email />
           `);
 
+    let popupCommands = 
+      this.renderTemplate('menu-commands', { logout: this.logout, signOutText: this.signOutText }) ||
+      html`
+        <div class="popup-commands">
+          <ul>
+            <li>
+              <button class="popup-command" @click=${this.logout}>
+                ${this.renderTemplate('sign-out', { signOutText: this.signOutText }) || this.signOutText}
+              </button>
+            </li>
+          </ul>
+        </div>
+      `;
+
     return (
       this.renderTemplate('menu-container', { content: personComponent }) ||
       html`
@@ -289,15 +303,7 @@ export class MgtLogin extends MgtTemplatedComponent {
             <div>
               ${personComponent}
             </div>
-            <div class="popup-commands">
-              <ul>
-                <li>
-                  <button class="popup-command" @click=${this.logout}>
-                    ${this.signOutText}
-                  </button>
-                </li>
-              </ul>
-            </div>
+            ${popupCommands}
           </div>
         </div>
       `

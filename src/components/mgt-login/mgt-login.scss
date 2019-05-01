@@ -13,6 +13,7 @@
   --background-color--hover: #{$ms-color-neutralLight};
   --menu-content-background-color: white;
   --menu-command-font-size: #{$ms-font-size-s};
+  --menu-command-margin: 16px 0 0;
   --menu-padding: 24px 48px 16px 24px;
 }
 
@@ -86,7 +87,7 @@
 
 .popup-commands ul {
   list-style-type: none;
-  margin: 16px 0 0;
+  margin: var(--menu-command-margin);
   padding: 0;
 }
 

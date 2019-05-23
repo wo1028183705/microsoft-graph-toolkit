@@ -9,9 +9,10 @@ import { LitElement, customElement, property } from 'lit-element';
 import { MsalConfig, MsalProvider } from '../../providers/MsalProvider';
 import { LoginType } from '../../providers/IProvider';
 import { Providers } from '../../Providers';
+import { MgtBaseProvider } from './baseProvider';
 
 @customElement('mgt-msal-provider')
-export class MgtMsalProvider extends LitElement {
+export class MgtMsalProvider extends MgtBaseProvider {
   private _isInitialized: boolean = false;
 
   @property({
@@ -37,6 +38,8 @@ export class MgtMsalProvider extends LitElement {
 
   firstUpdated(changedProperties) {
     this.validateAuthProps();
+
+    super.firstUpdated(changedProperties);
   }
 
   private validateAuthProps() {

@@ -8,9 +8,10 @@
 import { LitElement, customElement, property } from 'lit-element';
 import { Providers } from '../../Providers';
 import { TeamsProvider } from '../../providers/TeamsProvider';
+import { MgtBaseProvider } from './baseProvider';
 
 @customElement('mgt-teams-provider')
-export class MgtTeamsProvider extends LitElement {
+export class MgtTeamsProvider extends MgtBaseProvider {
   private _provider: TeamsProvider;
 
   @property({
@@ -30,6 +31,8 @@ export class MgtTeamsProvider extends LitElement {
     if (await TeamsProvider.isAvailable()) {
       Providers.globalProvider = this._provider;
     }
+
+    super.firstUpdated(changedProperties);
   }
 
   private validateAuthProps() {

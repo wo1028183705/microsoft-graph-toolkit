@@ -19,9 +19,20 @@ export abstract class MgtBaseProvider extends MgtBaseComponent {
     const provider = Providers.globalProvider;
 
     if (provider) {
+      // Fire event for current state
+      this.fireCustomEvent('onStateChanged', provider.state);
+
       provider.onStateChanged(() => {
         this.fireCustomEvent('onStateChanged', provider.state);
       });
+    }
+  }
+
+  firstUpdated(changedProperties) {
+    const provider = Providers.globalProvider;
+
+    if (provider) {
+      this.fireCustomEvent('onStateLoaded', provider.state);
     }
   }
 }

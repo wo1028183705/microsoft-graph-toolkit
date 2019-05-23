@@ -18,12 +18,26 @@
     <script type="module" src="./dist/es6/mock/mgt-mock-provider.js"></script>
     <script type="module" src="./dist/es6/components/providers/mgt-msal-provider.js"></script>
     <script type="module" src="./dist/es6/components/mgt-tasks/mgt-tasks.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('mgt-msal-provider').addEventListener('onStateLoaded', function(newState) {
+          console.log('Login State: ' + newState);
+        });
+      });
+
+      function printState(newState) {
+        console.log('Login State: ', newState);
+      }
+    </script>
   </head>
 
   <body>
     <mgt-msal-provider
       client-id="a974dfa0-9f57-49b9-95db-90f04ce2111a"
       scopes="user.read,people.read,user.readbasic.all,contacts.read,calendars.read"
+      login-type="popup"
+      onStateLoaded="printState"
+      onStateChanged="printState"
     ></mgt-msal-provider>
 
     <!-- <mgt-mock-provider></mgt-mock-provider> -->

@@ -13,6 +13,12 @@ In order for the components to use a provider, the `Providers.globalProvider` pr
 
 Example of using the MsalProvider:
 
+```html
+<mgt-msal-provider client-id="<CLIENT_ID>"></mgt-teams-provider>
+```
+
+OR
+
 ```js
 Providers.globalProvider = new MsalProvider({
   clientId: '[CLIENT_ID]'

@@ -5,34 +5,32 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { Providers } from '../../Providers';
 import { MgtBaseComponent } from '../baseComponent';
+import { IProvider } from '../../providers/IProvider';
+import { Providers } from '../../Providers';
 
 export abstract class MgtBaseProvider extends MgtBaseComponent {
-  constructor() {
-    super();
-    Providers.onProviderUpdated(() => this.loadState());
-    this.loadState();
+  private _provider: IProvider;
+
+  public get provider() {
+    return this._provider;
   }
 
-  private async loadState() {
-    const provider = Providers.globalProvider;
+  public set provider(value) {
+    if (!Providers.globalProvider && !this._provider && value) {
+      this._provider = value;
+      Providers.globalProvider = this.provider;
 
-    if (provider) {
-      // Fire event for current state
-      this.fireCustomEvent('onStateChanged', provider.state);
-
-      provider.onStateChanged(() => {
-        this.fireCustomEvent('onStateChanged', provider.state);
-      });
+      this._provider.onStateChanged(this.onProviderStateChanged.bind(this));
+      this.fireStateChangedEvent();
     }
   }
 
-  firstUpdated(changedProperties) {
-    const provider = Providers.globalProvider;
+  private onProviderStateChanged() {
+    this.fireStateChangedEvent();
+  }
 
-    if (provider) {
-      this.fireCustomEvent('onStateLoaded', provider.state);
-    }
+  private fireStateChangedEvent() {
+    this.fireCustomEvent('stateChanged', this._provider.state);
   }
 }

@@ -5,10 +5,9 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { LitElement, customElement, property } from 'lit-element';
+import { customElement, property } from 'lit-element';
 import { MsalConfig, MsalProvider } from '../../providers/MsalProvider';
 import { LoginType } from '../../providers/IProvider';
-import { Providers } from '../../Providers';
 import { MgtBaseProvider } from './baseProvider';
 
 @customElement('mgt-msal-provider')
@@ -38,8 +37,6 @@ export class MgtMsalProvider extends MgtBaseProvider {
 
   firstUpdated(changedProperties) {
     this.validateAuthProps();
-
-    super.firstUpdated(changedProperties);
   }
 
   private validateAuthProps() {
@@ -72,7 +69,7 @@ export class MgtMsalProvider extends MgtBaseProvider {
         }
       }
 
-      Providers.globalProvider = new MsalProvider(config);
+      this.provider = new MsalProvider(config);
     }
   }
 }

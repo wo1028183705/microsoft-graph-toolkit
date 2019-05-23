@@ -19,8 +19,17 @@ export abstract class IProvider implements AuthenticationProvider {
 
   setState(state: ProviderState) {
     if (state != this._state) {
+      let previousState = this._state;
       this._state = state;
-      this._loginChangedDispatcher.fire({});
+
+      let eventArgs = {
+        previousLoginState: previousState,
+        loginState: state
+      };
+
+      console.log('fire', eventArgs);
+
+      this._loginChangedDispatcher.fire(eventArgs);
     }
   }
 
@@ -48,7 +57,10 @@ export abstract class IProvider implements AuthenticationProvider {
 }
 
 export type EventHandler<E> = (event: E) => void;
-export interface LoginChangedEvent {}
+export interface LoginChangedEvent {
+  previousLoginState: ProviderState;
+  loginState: ProviderState;
+}
 
 export class EventDispatcher<E> {
   private eventHandlers: EventHandler<E>[] = [];

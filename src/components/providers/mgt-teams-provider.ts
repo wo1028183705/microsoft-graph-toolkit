@@ -5,15 +5,12 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { LitElement, customElement, property } from 'lit-element';
-import { Providers } from '../../Providers';
+import { customElement, property } from 'lit-element';
 import { TeamsProvider } from '../../providers/TeamsProvider';
 import { MgtBaseProvider } from './baseProvider';
 
 @customElement('mgt-teams-provider')
 export class MgtTeamsProvider extends MgtBaseProvider {
-  private _provider: TeamsProvider;
-
   @property({
     type: String,
     attribute: 'client-id'
@@ -26,19 +23,14 @@ export class MgtTeamsProvider extends MgtBaseProvider {
   })
   authPopupUrl = '';
 
-  async firstUpdated(changedProperties) {
+  firstUpdated(changedProperties) {
     this.validateAuthProps();
-    if (await TeamsProvider.isAvailable()) {
-      Providers.globalProvider = this._provider;
-    }
-
-    super.firstUpdated(changedProperties);
   }
 
   private validateAuthProps() {
-    if (this.clientId && this.authPopupUrl) {
-      if (!this._provider) {
-        this._provider = new TeamsProvider({
+    if (TeamsProvider.isAvailable() && this.clientId && this.authPopupUrl) {
+      if (!this.provider) {
+        this.provider = new TeamsProvider({
           clientId: this.clientId,
           authPopupUrl: this.authPopupUrl
         });

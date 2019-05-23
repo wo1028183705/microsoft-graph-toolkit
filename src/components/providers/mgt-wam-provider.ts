@@ -5,8 +5,7 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { LitElement, customElement, property } from 'lit-element';
-import { Providers } from '../../Providers';
+import { customElement, property } from 'lit-element';
 import { WamProvider } from '../../providers/WamProvider';
 import { MgtBaseProvider } from './baseProvider';
 
@@ -18,13 +17,11 @@ export class MgtWamProvider extends MgtBaseProvider {
 
   firstUpdated(changedProperties) {
     this.validateAuthProps();
-
-    super.firstUpdated(changedProperties);
   }
 
   private validateAuthProps() {
     if (this.clientId !== undefined) {
-      Providers.globalProvider = new WamProvider(this.clientId, this.authority);
+      this.provider = new WamProvider(this.clientId, this.authority);
     }
   }
 }

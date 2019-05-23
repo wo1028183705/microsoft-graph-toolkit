@@ -5,15 +5,14 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { LitElement, customElement } from 'lit-element';
+import { customElement } from 'lit-element';
 import { MockProvider } from './MockProvider';
-import { Providers } from '../Providers';
 import { MgtBaseProvider } from '../components/providers/baseProvider';
 
 @customElement('mgt-mock-provider')
 export class MgtMockProvider extends MgtBaseProvider {
   constructor() {
     super();
-    Providers.globalProvider = new MockProvider(true);
+    this.provider = new MockProvider(true);
   }
 }

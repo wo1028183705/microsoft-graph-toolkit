@@ -18,17 +18,6 @@
     <script type="module" src="./dist/es6/mock/mgt-mock-provider.js"></script>
     <script type="module" src="./dist/es6/components/providers/mgt-msal-provider.js"></script>
     <script type="module" src="./dist/es6/components/mgt-tasks/mgt-tasks.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('mgt-msal-provider').addEventListener('onStateLoaded', function(newState) {
-          console.log('Login State: ' + newState);
-        });
-      });
-
-      function printState(newState) {
-        console.log('Login State: ', newState);
-      }
-    </script>
   </head>
 
   <body>
@@ -46,5 +35,12 @@
     <mgt-tasks data-source="todo"></mgt-tasks>
     <mgt-agenda group-by-day></mgt-agenda>
     <mgt-people></mgt-people>
+
+    <script>
+      console.log('here');
+      document.querySelector('mgt-msal-provider').addEventListener('stateChanged', function(event) {
+        console.log('Login State: ' + event.detail);
+      });
+    </script>
   </body>
 </html>

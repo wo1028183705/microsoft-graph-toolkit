@@ -19,6 +19,7 @@
     <script type="module" src="./dist/es6/components/mgt-login/mgt-login.js"></script>
     <script type="module" src="./dist/es6/components/mgt-agenda/mgt-agenda.js"></script>
     <script type="module" src="./dist/es6/components/mgt-people/mgt-people.js"></script>
+    <script type="module" src="./dist/es6/components/mgt-people/mgt-picker.js"></script>
     <script type="module" src="./dist/es6/mock/mgt-mock-provider.js"></script>
     <script type="module" src="./dist/es6/components/providers/mgt-msal-provider.js"></script>
     <script type="module" src="./dist/es6/components/mgt-tasks/mgt-tasks.js"></script>
@@ -33,40 +34,6 @@
     ></mgt-msal-provider> -->
     <mgt-mock-provider></mgt-mock-provider>
 
-    <mgt-login></mgt-login>
-
-    <mgt-agenda>
-      <template data-type="event">
-        <div>{{ event.subject }}</div>
-        <div id="testDiv"></div>
-        <div data-for="attendee in event.attendees">
-          <mgt-person person-query="{{ attendee.emailAddress.name }}">
-            <template>
-              <div data-if="person.image">
-                <img src="{{ person.image }}" />
-              </div>
-              <div data-else>
-                {{ person.displayName }}
-              </div>
-            </template>
-          </mgt-person>
-        </div>
-      </template>
-    </mgt-agenda>
+    <mgt-picker></mgt-picker>
   </body>
-
-  <script type="text/babel">
-    class Example extends React.Component {
-      onClick() {
-        console.log('inside template');
-      }
-      render() {
-        return <button style={{ minWidth: '200px', minHeight: '200px' }} id="buttonTest" onClick={this.onClick} />;
-      }
-    }
-
-    setTimeout(function() {
-      ReactDOM.render(<Example />, document.getElementById('testDiv'));
-    }, 1000);
-  </script>
 </html>

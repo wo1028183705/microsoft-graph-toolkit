@@ -5,7 +5,7 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { LitElement, html } from 'lit-element';
+import { LitElement, html, property } from 'lit-element';
 
 export abstract class MgtBaseComponent extends LitElement {
   protected fireCustomEvent(eventName: string, detail?: any): boolean {
@@ -14,6 +14,7 @@ export abstract class MgtBaseComponent extends LitElement {
       bubbles: false,
       detail: detail
     });
+    this['_needsShimAdoptedStyleSheets'] = true;
     return this.dispatchEvent(event);
   }
 
@@ -36,5 +37,19 @@ export abstract class MgtBaseComponent extends LitElement {
 
   public isShadowRootDisabled() {
     return !MgtBaseComponent._useShadowRoot || !(this.constructor as typeof MgtBaseComponent)._useShadowRoot;
+  }
+
+  @property({
+    attribute: 'theme',
+    type: String,
+    reflect: true
+  })
+  useTheme = 'false';
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+    if (name == 'theme') {
+      this.useTheme = newValue;
+    }
   }
 }

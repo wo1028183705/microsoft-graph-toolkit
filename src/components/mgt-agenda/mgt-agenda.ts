@@ -5,7 +5,7 @@
  * -------------------------------------------------------------------------------------------
  */
 
-import { html, customElement, property } from 'lit-element';
+import { html, customElement, property, LitElement } from 'lit-element';
 import * as MicrosoftGraph from '@microsoft/microsoft-graph-types';
 
 import { Providers } from '../../Providers';
@@ -17,6 +17,8 @@ import '../../styles/fabric-icon-font';
 import { MgtTemplatedComponent } from '../templatedComponent';
 import { prepScopes } from '../../Graph';
 import { MgtPersonDetails } from '../mgt-person/mgt-person';
+import { MgtBaseComponent } from '../baseComponent';
+import { hostname } from 'os';
 
 @customElement('mgt-agenda')
 export class MgtAgenda extends MgtTemplatedComponent {
@@ -49,7 +51,6 @@ export class MgtAgenda extends MgtTemplatedComponent {
     reflect: true
   })
   days: number = 3;
-
   @property({
     attribute: 'event-query',
     type: String
@@ -149,10 +150,19 @@ export class MgtAgenda extends MgtTemplatedComponent {
   render() {
     this._isNarrow = this.offsetWidth < 600;
     return html`
-      <div class="agenda ${this._isNarrow ? 'narrow' : ''}">
+      <div class="agenda ${this._isNarrow ? 'narrow' : ''} ${this.renderTheme()}">
         ${this.renderAgenda()}
       </div>
     `;
+  }
+
+  private renderTheme() {
+    let theme = this.useTheme.split(' ');
+    if (theme[0]) {
+      return theme[0];
+    } else {
+      return '';
+    }
   }
 
   private renderAgenda() {

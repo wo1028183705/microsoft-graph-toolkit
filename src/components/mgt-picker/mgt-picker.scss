@@ -8,8 +8,12 @@
 @import '../../../node_modules/office-ui-fabric-core/dist/sass/References';
 @import '../../styles/shared-styles.scss';
 
-$list-margin: var(--list-margin, 8px 4px 8px 8px);
+$list-margin: var(--list-margin, 20px 4px 8px 8px);
 $avatar-margin: var(--avatar-margin, 0 4px 0 0);
+$avatar-size-s: var(--avatar-size-s, 24px);
+$avatar-size: var(--avatar-size, 48px);
+$initials-color: var(--initials-color, white);
+$initials-background-color: var(--initials-background-color, #{$ms-color-magenta});
 
 :host .people-list,
 mgt-picker .people-list {
@@ -29,13 +33,17 @@ mgt-picker .people-chosen-list {
   font-style: normal;
   font-weight: normal;
   display: flex;
+  flex-wrap: wrap;
 }
 
 :host .people-person,
 mgt-picker .people-person {
   margin: $avatar-margin;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  background-color: rgba(196, 196, 196, 0.24);
+  border-radius: 15px;
+  max-height: 24px;
 }
 
 mgt-picker .people-picker-input {
@@ -48,12 +56,51 @@ mgt-picker .duplicate-person {
   border-bottom: 1px solid red;
 }
 mgt-picker .remove-person-button {
-  margin-left: 4px;
-  padding: 5px;
-  background-color: grey;
+  background: #767676;
+  transform: matrix(-0.71, -0.71, 0.71, -0.71, 0, 0);
+}
+
+mgt-picker .remove-person-button-secondary {
+  background: #767676;
+  transform: matrix(0.71, -0.71, 0.71, 0.71, 0, 0);
 }
 mgt-picker .people-list-separator {
   text-decoration: none;
-  margin-top: 10px;
+  margin-top: 4px;
   border-bottom: 2px solid blue;
+}
+mgt-picker .person-display-name {
+  margin-left: 8px;
+}
+
+:host .user-avatar,
+mgt-person .user-avatar {
+  width: $avatar-size;
+  height: $avatar-size;
+
+  &.initials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $initials-color;
+    background-color: $initials-background-color;
+    border-radius: 50%;
+    font-weight: 400;
+    font-size: 60%;
+  }
+
+  &.small {
+    width: $avatar-size-s;
+    height: $avatar-size-s;
+  }
+
+  &.row-span-2 {
+    width: $avatar-size;
+    height: $avatar-size;
+  }
+
+  &.row-span-3 {
+    width: $avatar-size;
+    height: $avatar-size;
+  }
 }

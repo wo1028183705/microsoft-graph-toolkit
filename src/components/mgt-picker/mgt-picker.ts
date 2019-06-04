@@ -114,11 +114,20 @@ export class MgtPicker extends MgtTemplatedComponent {
                   class="${person.id == this._duplicatePersonId ? 'people-person duplicate-person' : 'people-person'}"
                 >
                   ${this.renderTemplate('person', { person: person }, person.displayName) || this.renderPerson(person)}
-                  <p>${person.displayName}</p>
+                  <p class="person-display-name">${person.displayName}</p>
                   <p class="remove-person-button" @click="${() => this.removePerson(person)}">x</p>
+                  <p class="remove-person-button-secondary" @click="${() => this.removePerson(person)}">x</p>
                 </li>
               `
           )}
+          <input
+            type="text"
+            placeholder="Name/email..."
+            .value="${this._personName}"
+            @keydown="${(e: KeyboardEvent & { target: HTMLInputElement }) => {
+              this.onUserTypeSearch(e);
+            }}"
+          />
         </ul>
       `;
     } else {
@@ -136,14 +145,6 @@ export class MgtPicker extends MgtTemplatedComponent {
           <div>
             <div class="people-picker-input">
               ${this.renderChosenPeople()}
-              <input
-                type="text"
-                placeholder="Name/email..."
-                .value="${this._personName}"
-                @keydown="${(e: KeyboardEvent & { target: HTMLInputElement }) => {
-                  this.onUserTypeSearch(e);
-                }}"
-              />
             </div>
             <div class="people-list-separator"></div>
             <ul class="people-list">

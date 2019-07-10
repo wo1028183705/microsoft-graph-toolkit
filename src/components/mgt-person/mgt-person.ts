@@ -138,7 +138,6 @@ export class MgtPerson extends MgtTemplatedComponent {
 
   private async loadImage(person: any) {
     let provider = Providers.globalProvider;
-
     if (person.userPrincipalName) {
       let userPrincipalName = person.userPrincipalName;
       provider.graph.getUserPhoto(userPrincipalName).then(photo => {

@@ -19,7 +19,7 @@
     <script type="module" src="./dist/es6/components/mgt-login/mgt-login.js"></script>
     <script type="module" src="./dist/es6/components/mgt-agenda/mgt-agenda.js"></script>
     <script type="module" src="./dist/es6/components/mgt-people/mgt-people.js"></script>
-    <script type="module" src="./dist/es6/components/mgt-people/mgt-picker.js"></script>
+    <script type="module" src="./dist/es6/components/mgt-picker/mgt-people-picker.js"></script>
     <script type="module" src="./dist/es6/mock/mgt-mock-provider.js"></script>
     <script type="module" src="./dist/es6/components/providers/mgt-msal-provider.js"></script>
     <script type="module" src="./dist/es6/components/mgt-tasks/mgt-tasks.js"></script>
@@ -28,13 +28,30 @@
   </head>
 
   <body>
-    <!-- <mgt-msal-provider
-      client-id="a974dfa0-9f57-49b9-95db-90f04ce2111a"
-      scopes="user.read,people.read,user.readbasic.all,contacts.read,calendars.read"
-    ></mgt-msal-provider> -->
     <mgt-mock-provider></mgt-mock-provider>
-    <!-- <mgt-login></mgt-login> -->
 
-    <mgt-picker></mgt-picker>
+    <div style="max-width: 400px; max-height: 400px">
+      <mgt-people-picker id="picker1"></mgt-people-picker>
+    </div>
+
+    <div style="position: fixed; bottom: 0;">
+      <h3>Chosen People:</h3>
+      <ul id="chosenPeople"></ul>
+    </div>
   </body>
+  <script>
+    let picker1 = document.getElementById('picker1');
+    let chosenArea = document.getElementById('chosenPeople');
+
+    picker1.addEventListener('selectedPeople', function(e) {
+      //reset area
+      chosenArea.innerHTML = '';
+      //render selected people to chosen people div
+      for (var i = 0; i < e.detail.length; i++) {
+        let newElem = document.createElement('li');
+        newElem.innerHTML = e.detail[i].displayName + ' ' + e.detail[i].id;
+        chosenArea.append(newElem);
+      }
+    });
+  </script>
 </html>

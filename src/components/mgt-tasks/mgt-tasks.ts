@@ -18,6 +18,7 @@ import { ITaskSource, PlannerTaskSource, TodoTaskSource, IDresser, IDrawer, ITas
 import { styles } from './mgt-tasks-css';
 
 import '../mgt-person/mgt-person';
+import '../mgt-picker/mgt-people-picker';
 import '../sub-components/mgt-arrow-options/mgt-arrow-options';
 import '../sub-components/mgt-dot-options/mgt-dot-options';
 
@@ -95,6 +96,8 @@ export class MgtTasks extends MgtBaseComponent {
   @property() private _inTaskLoad: boolean = false;
   @property() private _hasDoneInitialLoad: boolean = false;
   @property() private _todoDefaultSet: boolean = false;
+
+  @property() private _showPeoplePicker: boolean = false;
 
   private _me: User = null;
   private _providerUpdateCallback: () => void | any;
@@ -312,6 +315,16 @@ export class MgtTasks extends MgtBaseComponent {
     this._newTaskName = '';
     this._newTaskDresserId = '';
   }
+  public assignPeople() {
+    console.log('Assign people called');
+    this._showPeoplePicker ? (this._showPeoplePicker = false) : (this._showPeoplePicker = true);
+  }
+
+  private renderPicker() {
+    return html`
+      <mgt-picker></mgt-picker>
+    `;
+  }
 
   protected render() {
     let tasks = this._tasks
@@ -330,6 +343,9 @@ export class MgtTasks extends MgtBaseComponent {
       <div class="Tasks">
         ${this._showNewTask ? this.renderNewTaskHtml() : null} ${loadingTask}
         ${repeat(tasks, task => task.id, task => this.renderTaskHtml(task))}
+      </div>
+      <div>
+        ${this._showPeoplePicker ? this.renderPicker() : ''}
       </div>
     `;
   }
@@ -587,7 +603,7 @@ export class MgtTasks extends MgtBaseComponent {
                     this._newTaskSelfAssigned = e.target.checked;
                   }}"
                 />
-                <span class="FakeCheckBox"></span>
+                <span @click="${this.assignPeople}" class="FakeCheckBox"></span>
                 <span>Assign to Me</span>
               </label>
             </span>

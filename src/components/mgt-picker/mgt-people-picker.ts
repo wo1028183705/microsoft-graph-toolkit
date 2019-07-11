@@ -35,6 +35,7 @@ export class MgtPicker extends MgtTemplatedComponent {
   @property() private _selectedPeople: Array<any> = [];
   @property() private _duplicatePersonId: string = '';
   @property() private _userInput: string = '';
+  @property() private _previousSearch: any;
 
   /* TODO: Do we want a query property for loading groups from calls? */
 
@@ -47,10 +48,18 @@ export class MgtPicker extends MgtTemplatedComponent {
   }
 
   private onUserTypeSearch(event: any) {
+    if (event.code == 'Escape') {
+      event.target.value = '';
+      this._userInput = '';
+      this.people = [];
+      return;
+    }
     this._userInput = event.target.value;
-    if (this._userInput.length) {
+    if (event.target.value) {
       this.loadPersonSearch(this._userInput);
     } else {
+      event.target.value = '';
+      this._userInput = '';
       this.people = [];
     }
   }
@@ -80,10 +89,10 @@ export class MgtPicker extends MgtTemplatedComponent {
         });
         this.dispatchEvent(event);
 
-        let inputValue = <HTMLInputElement>document.getElementById('people-picker-input');
-        inputValue.value = '';
         this.people = [];
         this._userInput = '';
+        this._personName = '';
+        (<HTMLInputElement>event.target).value = '';
       }
     }
   }
@@ -96,21 +105,40 @@ export class MgtPicker extends MgtTemplatedComponent {
 
       let peoples: any = await client.findPerson(name);
 
-      //filter already selected people
-
       this.filterPeople(peoples);
     }
   }
 
   private filterPeople(peoples: any) {
-    this.people = peoples;
-
+    //check if people need to be updated
+    if (this.people) {
+      if (this.people.length > 0) this._previousSearch = this.people;
+      //find ids from previous search
+      let id_filter = peoples.map(function(el) {
+        return el.id;
+      });
+      var filtered = this._previousSearch.filter(function(person) {
+        return id_filter.indexOf(person.id) === -1;
+      });
+      if (filtered.length == 0 && this._userInput.length > 0) {
+        console.log('getting filtered result, no changes', filtered);
+        this.findHighlightText();
+        return;
+      } else {
+        this.people = peoples;
+      }
+    } else {
+      this.people = peoples;
+    }
+    //this.people = peoples;
+    //filter already selected people
     let selected = this._selectedPeople;
     for (let i = 0; i < selected.length; i++) {
       this.people = peoples.filter(function(person: any) {
         return person.id !== selected[i].id;
       });
     }
+    //create highlight text
     this.findHighlightText();
     for (var i = 0; i < this.people.length; i++) {
       if (peoples[i].image == undefined) {
@@ -123,7 +151,7 @@ export class MgtPicker extends MgtTemplatedComponent {
     let provider = Providers.globalProvider;
     if (this.people) {
       for (var i = 0; i < peoples.length; i++) {
-        if (peoples[i].id) {
+        if (peoples[i].id && peoples[i].image == undefined) {
           await Promise.all([
             provider.graph.getUser(peoples[i].id).then(user => {
               if (user) {
@@ -152,7 +180,9 @@ export class MgtPicker extends MgtTemplatedComponent {
             let newName: string = that.people[i].displayName.toLowerCase();
             newName = newName.replace(
               that._userInput.toLowerCase(),
-              '<span class="highlight-search-text">' + that._userInput + '</span>'
+              '<span class="highlight-search-text">' +
+                that.people[i].displayName.slice(0, that._userInput.length) +
+                '</span>'
             );
             if (document.getElementById(that.people[i].displayName) !== null) {
               document.getElementById(that.people[i].displayName).innerHTML = newName;
@@ -174,7 +204,7 @@ export class MgtPicker extends MgtTemplatedComponent {
 
   private renderErrorMessage() {
     if (this.people) {
-      if (this.people.length == 0) {
+      if (this.people.length == 0 && this._userInput.length > 0) {
         return html`
           <div class="error-message-parent">
             <div class="search-error-text">We didn't find any matches.</div>
@@ -196,7 +226,7 @@ export class MgtPicker extends MgtTemplatedComponent {
                 >
                   ${this.renderTemplate('person', { person: person }, person.displayName) || this.renderPerson(person)}
                   <p class="person-display-name">${person.displayName}</p>
-                  <span class="person-display-name CloseIcon" @click="${() => this.removePerson(person)}">\uE711</span>
+                  <div class="CloseIcon" @click="${() => this.removePerson(person)}">\uE711</div>
                 </li>
               `
           )}

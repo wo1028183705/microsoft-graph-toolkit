@@ -17,7 +17,7 @@ export abstract class MgtBaseComponent extends LitElement {
     return this.dispatchEvent(event);
   }
 
-  private static _useShadowRoot: boolean = false;
+  private static _useShadowRoot: boolean = true;
   public static get useShadowRoot() {
     return this._useShadowRoot;
   }

@@ -92,7 +92,6 @@ export class MgtPicker extends MgtTemplatedComponent {
         this.people = [];
         this._userInput = '';
         this._personName = '';
-        (<HTMLInputElement>event.target).value = '';
       }
     }
   }
@@ -122,7 +121,6 @@ export class MgtPicker extends MgtTemplatedComponent {
       });
       if (filtered.length == 0 && this._userInput.length > 0) {
         console.log('getting filtered result, no changes', filtered);
-        this.findHighlightText();
         return;
       } else {
         this.people = peoples;
@@ -130,7 +128,6 @@ export class MgtPicker extends MgtTemplatedComponent {
     } else {
       this.people = peoples;
     }
-    //this.people = peoples;
     //filter already selected people
     let selected = this._selectedPeople;
     for (let i = 0; i < selected.length; i++) {
@@ -138,8 +135,6 @@ export class MgtPicker extends MgtTemplatedComponent {
         return person.id !== selected[i].id;
       });
     }
-    //create highlight text
-    this.findHighlightText();
     for (var i = 0; i < this.people.length; i++) {
       if (peoples[i].image == undefined) {
         this.updateProfile(this.people);
@@ -169,28 +164,6 @@ export class MgtPicker extends MgtTemplatedComponent {
         }
       }
     }
-  }
-
-  private findHighlightText() {
-    let that = this;
-    setTimeout(function() {
-      if (that._userInput.length) {
-        if (that.people) {
-          for (var i = 0; i < that.people.length; i++) {
-            let newName: string = that.people[i].displayName.toLowerCase();
-            newName = newName.replace(
-              that._userInput.toLowerCase(),
-              '<span class="highlight-search-text">' +
-                that.people[i].displayName.slice(0, that._userInput.length) +
-                '</span>'
-            );
-            if (document.getElementById(that.people[i].displayName) !== null) {
-              document.getElementById(that.people[i].displayName).innerHTML = newName;
-            }
-          }
-        }
-      }
-    }, 0o400);
   }
 
   private removePerson(person: MgtPersonDetails) {
@@ -268,10 +241,40 @@ export class MgtPicker extends MgtTemplatedComponent {
     }
   }
 
-  private renderHightlightText(person: MgtPersonDetails) {
+  private renderHighlightText(person: MgtPersonDetails) {
+    let peoples: any = person;
+
+    let highlightLocation = peoples.displayName.toLowerCase().indexOf(this._userInput.toLowerCase());
+    if (highlightLocation !== -1) {
+      //no location
+      if (highlightLocation == 0) {
+        //highlight is at the beginning of sentence
+        peoples.first = '';
+        peoples.highlight = peoples.displayName.slice(0, this._userInput.length);
+        peoples.last = peoples.displayName.slice(this._userInput.length, peoples.displayName.length);
+      } else if (highlightLocation == peoples.displayName.length) {
+        //highlight is at end of the sentence
+        peoples.first = peoples.displayName.slice(0, highlightLocation);
+        peoples.highlight = peoples.displayName.slice(highlightLocation, peoples.displayName.length);
+        peoples.last = '';
+      } else {
+        //highlight is in middle of sentence
+        peoples.first = peoples.displayName.slice(0, highlightLocation);
+        peoples.highlight = peoples.displayName.slice(highlightLocation, highlightLocation + this._userInput.length);
+        peoples.last = peoples.displayName.slice(
+          highlightLocation + this._userInput.length,
+          peoples.displayName.length
+        );
+      }
+    } else {
+      peoples.first = peoples.displayName;
+    }
+
     return html`
-      <p class="people-person-text" id="${person.displayName}">
-        ${person.displayName}
+      <p class="people-person-text-area">
+        <span class="people-person-text">${peoples.first}</span
+        ><span class="people-person-text highlight-search-text">${peoples.highlight}</span
+        ><span class="people-person-text">${peoples.last}</span>
       </p>
     `;
   }
@@ -285,8 +288,8 @@ export class MgtPicker extends MgtTemplatedComponent {
               html`
                 <li class="people-person-list" @click="${(event: any) => this.addPerson(person, event)}">
                   ${this.renderTemplate('person', { person: person }, person.displayName) || this.renderPerson(person)}
-                  <p class="people-person-text" id="${person.displayName}">
-                    ${this.renderHightlightText(person)}
+                  <p class="people-person-text-area" id="${person.displayName}">
+                    ${this.renderHighlightText(person)}
                   </p>
                 </li>
               `

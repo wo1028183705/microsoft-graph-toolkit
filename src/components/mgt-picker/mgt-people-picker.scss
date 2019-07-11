@@ -90,9 +90,17 @@ mgt-people-picker .people-person-list {
   font-size: 14px;
 }
 
+:host .people-person-text-area,
+mgt-people-picker .people-person-text-area {
+  margin-left: 5px;
+  font-size: 0px;
+}
 :host .people-person-text,
 mgt-people-picker .people-person-text {
-  margin-left: 5px;
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
 }
 
 :host .input-search,

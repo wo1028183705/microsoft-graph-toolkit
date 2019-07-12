@@ -265,9 +265,19 @@ export class MgtPicker extends MgtTemplatedComponent {
           highlightLocation + this._userInput.length,
           peoples.displayName.length
         );
+
+        console.log('first', peoples.first);
+        console.log('highlight', peoples.highlight);
+        console.log('last', peoples.last);
       }
     } else {
-      peoples.first = peoples.displayName;
+      if (this._userInput.slice(-1) == ' ') {
+        //if highlight is not found due to space character
+        let search = this._userInput.replace(/\s/g, '');
+        this._userInput = search;
+      } else {
+        peoples.first = peoples.displayName;
+      }
     }
 
     return html`

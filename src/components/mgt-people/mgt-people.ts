@@ -33,6 +33,12 @@ export class MgtPeople extends MgtTemplatedComponent {
   })
   showMax: number = 3;
 
+  @property({
+    attribute: 'isSelected',
+    type: Number
+  })
+  isSelected: string = '';
+
   /* TODO: Do we want a query property for loading groups from calls? */
 
   static get styles() {

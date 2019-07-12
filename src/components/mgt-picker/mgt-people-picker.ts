@@ -37,6 +37,7 @@ export class MgtPicker extends MgtTemplatedComponent {
   @property() private _userInput: string = '';
   @property() private _previousSearch: any;
 
+  @property() private arrowSelectionCount: number = 0;
   /* TODO: Do we want a query property for loading groups from calls? */
 
   static get styles() {
@@ -62,12 +63,31 @@ export class MgtPicker extends MgtTemplatedComponent {
       this._userInput = '';
       this.people = [];
     }
+    if (event.keyCode == 40 || event.keyCode == 38) {
+      this.handleArrowSelection(event);
+    }
   }
 
   private onUserKeyDown(event: any) {
     if (event.code == 'Tab') {
       this.addPerson(this.people[0], event);
     }
+  }
+
+  private handleArrowSelection(event: any) {
+    let peoples: any = this.people;
+    console.log('arrow selection count', this.arrowSelectionCount);
+    for (let i = 0; i < peoples.length; i++) {
+      peoples[i].isSelected = '';
+    }
+    if (peoples[this.arrowSelectionCount]) {
+      peoples[this.arrowSelectionCount].isSelected = 'fill';
+    } else {
+      peoples[0].isSelected = 'fill';
+      this.arrowSelectionCount = 0;
+    }
+    this.renderPersons(peoples);
+    this.arrowSelectionCount++;
   }
 
   private addPerson(person: MgtPersonDetails, event: any) {
@@ -120,7 +140,6 @@ export class MgtPicker extends MgtTemplatedComponent {
         return id_filter.indexOf(person.id) === -1;
       });
       if (filtered.length == 0 && this._userInput.length > 0) {
-        console.log('getting filtered result, no changes', filtered);
         return;
       } else {
         this.people = peoples;
@@ -265,13 +284,9 @@ export class MgtPicker extends MgtTemplatedComponent {
           highlightLocation + this._userInput.length,
           peoples.displayName.length
         );
-
-        console.log('first', peoples.first);
-        console.log('highlight', peoples.highlight);
-        console.log('last', peoples.last);
       }
     } else {
-      if (this._userInput.slice(-1) == ' ') {
+      if (/\s/g.test(this._userInput) == true) {
         //if highlight is not found due to space character
         let search = this._userInput.replace(/\s/g, '');
         this._userInput = search;
@@ -281,7 +296,7 @@ export class MgtPicker extends MgtTemplatedComponent {
     }
 
     return html`
-      <p class="people-person-text-area">
+      <p>
         <span class="people-person-text">${peoples.first}</span
         ><span class="people-person-text highlight-search-text">${peoples.highlight}</span
         ><span class="people-person-text">${peoples.last}</span>
@@ -290,23 +305,31 @@ export class MgtPicker extends MgtTemplatedComponent {
   }
 
   private renderPeopleList() {
-    if (this.people) {
+    let peoples: any = this.people;
+    if (peoples) {
       return html`
         <ul class="people-list">
-          ${this.people.slice(0, this.showMax).map(
-            person =>
-              html`
-                <li class="people-person-list" @click="${(event: any) => this.addPerson(person, event)}">
-                  ${this.renderTemplate('person', { person: person }, person.displayName) || this.renderPerson(person)}
-                  <p class="people-person-text-area" id="${person.displayName}">
-                    ${this.renderHighlightText(person)}
-                  </p>
-                </li>
-              `
-          )}
+          ${this.renderPersons(peoples)}
         </ul>
       `;
     }
+  }
+  private renderPersons(peoples: any) {
+    console.log('render persns is called', peoples);
+    return peoples.slice(0, this.showMax).map(
+      person =>
+        html`
+          <li
+            class="${peoples.isSelected == 'fill' ? 'people-person-list-fill' : 'people-person-list'}"
+            @click="${(event: any) => this.addPerson(person, event)}"
+          >
+            ${this.renderTemplate('person', { person: person }, person.displayName) || this.renderPerson(person)}
+            <p class="people-person-text-area" id="${person.displayName}">
+              ${this.renderHighlightText(person)}
+            </p>
+          </li>
+        `
+    );
   }
 
   render() {
